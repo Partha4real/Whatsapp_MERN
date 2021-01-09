@@ -1,11 +1,23 @@
 import { Avatar, IconButton } from '@material-ui/core';
 import { AttachFile, InsertEmoticon, Mic, MoreVert, SearchOutlined, SettingsInputAntenna } from '@material-ui/icons';
 import React, { useState } from 'react';
+import axios from '../axios';
 import '../chat.css';
 
-function Chat() {
+function Chat({messages}) {
     const [input, setInput] = useState('');
 
+    const sendMessage = async (e) => {
+        e.preventDefault();
+
+        await axios.post('/messages/new', {
+            message: input,
+            name: "Adi",
+            timestamp: "Just Now",
+            received: false
+        });
+        setInput('');
+    }
     return (
         <div className="chat">
             <div className="chat-header">
@@ -29,23 +41,20 @@ function Chat() {
                 </div>
             </div>
             <div className="chat-body">
-                <p className="chat-message">
-                    <span className="chat-name">Sainy</span>
-                    This is a message
-                    <span className="chat-timestamp">{new Date().toUTCString()}</span>
-                </p>
-
-                <p className="chat-message chat-receiver">
-                    <span className="chat-name">Partha</span>
-                    This is a message
-                    <span className="chat-timestamp">{new Date().toUTCString()}</span>
-                </p>
+                {messages.map((message) => (
+                    <p className={`chat-message ${message.received && 'chat-receiver'}`}>
+                        <span className="chat-name">{message.name}</span>
+                        {message.message}
+                        <span className="chat-timestamp">{message.timestamp}</span>
+                    </p>
+                ))}
+                
             </div>
             <div className="chat-footer">
                 <InsertEmoticon />
                 <form>
                     <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Type a message" />
-                    <button id="form-btn-submit" type="submit" onClick="{sendMessage">Send Message</button>
+                    <button type="submit" onClick={sendMessage}>Send Message</button>
                 </form>
                 <Mic />
             </div>

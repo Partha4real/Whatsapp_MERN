@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import Messages from './Messages.js';
 import morgan from 'morgan';
 import Pusher from 'pusher';
+import cors from 'cors';
 
 // app config
 const app = express();
@@ -20,6 +21,14 @@ const pusher = new Pusher({
 
 // middleware
 app.use(express.json());
+app.use(cors());
+
+// app.use((req, res, next) => {
+//     res.setHeader("Access-Control-Allow-Origin", "*");
+//     res.setHeader("Access-Control-Allow-Headers", "*");
+//     next();
+// });
+
 // morgan
 app.use(morgan('dev'));
 
@@ -46,6 +55,8 @@ db.once('open', () => {
             {
                 name: messageDetails.name,
                 message: messageDetails.message,
+                timestamp: messageDetails.timestamp,
+                received: messageDetails.received
             });
         } else {
             console.log("Error triggering pusher");
