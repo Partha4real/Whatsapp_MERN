@@ -54,7 +54,7 @@ db.once('open', () => {
             pusher.trigger('rooms', 'created',
             {
                 name: roomDetails.name,
-                id: roomDetails._id
+                _id: roomDetails._id
             });
         } else {
             console.log("Error triggering pusher");
@@ -74,8 +74,9 @@ db.once('open', () => {
             {
                 name: messageDetails.name,
                 message: messageDetails.message,
-                timestamp: messageDetails.timestamp,
-                received: messageDetails.received
+                createdAt: messageDetails.createdAt,
+                id: messageDetails._id,
+                room: messageDetails.room
             });
         } else {
             console.log("Error triggering pusher");
@@ -110,6 +111,19 @@ app.get('/rooms/fetch', (req, res) => {
             res.status(200).send(data)
         }
     })
+})
+
+app.get('/rooms/:roomId', async (req, res) => {
+    const roomId = (req.params);
+    console.log(roomId.roomId)
+    try {
+        let room = await Rooms.findOne({_id: roomId.roomId})
+        console.log(room)
+        res.status(200).send(room)
+    } catch (error) {
+        console.log(error)
+        // res.status(500).send(err);
+    }
 })
 
 

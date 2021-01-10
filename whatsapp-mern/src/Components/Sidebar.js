@@ -5,15 +5,18 @@ import Pusher from 'pusher-js';
 import axios from '../axios';
 import '../sidebar.css';
 import SidebarChat from './SidebarChat';
+import { useStateValue } from '../StateProvider';
 
 function Sidebar() {
     const [rooms, setRoom] = useState([]);
+    const [{user}, dispatch] = useStateValue();
+
     useEffect(() => {
       axios.get('/rooms/fetch')
       .then(response => {
         // console.log(response.data);
         setRoom(response.data)
-      })
+    })
     }, [])
   
     console.log(rooms);
@@ -32,10 +35,11 @@ function Sidebar() {
         channel.unsubscribe();
       }
     }, [rooms])
+
     return (
         <div className="sidebar">
             <div className="sidebar-header">
-                <Avatar src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" />
+                <Avatar src={user.photoURL} />
                 <div className="sidebar-headerRight">
                     <IconButton>  {/* Click functionality */}   
                         <DonutLarge />

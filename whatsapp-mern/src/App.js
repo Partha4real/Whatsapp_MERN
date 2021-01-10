@@ -5,9 +5,13 @@ import Pusher from 'pusher-js';
 import './App.css';
 import Chat from './Components/Chat';
 import Sidebar from './Components/Sidebar';
+import Login from './Components/Login';
 import axios from './axios';
+import { useStateValue } from './StateProvider';
 
 function App() {
+  const [{user}, dispatch] = useStateValue();
+
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -18,7 +22,7 @@ function App() {
     })
   }, [])
 
-  console.log(messages);
+  console.log('app',messages);
 
   useEffect(() => {
     const pusher = new Pusher('cfbecf8435342e494078', {
@@ -36,21 +40,24 @@ function App() {
   }, [messages])
   return (
     <div className="app">
-      <div className="app-body">
-      <Router> 
-        <Switch>
-          <Sidebar />
+      {!user ? (
+        <Login />
+      ) : (
+        <Router> 
+          <div className="app-body">
+            <Sidebar messages={messages} />
+              <Switch>
+                <Route exact={true} path="/">
+                </Route>
 
-          <Route exact path="/">
-            <Chat  messages={messages} />
-          </Route>
-
-          <Route  path="/rooms/:roomId">
-            <Chat  messages={messages} />
-          </Route>
-        </Switch> 
-      </Router>
-      </div>
+                <Route  path="/rooms/:roomId">
+                  <Chat messages={messages} />
+                </Route>
+              </Switch> 
+            </div>
+        </Router>
+      )}
+      
     </div>
   );
 }

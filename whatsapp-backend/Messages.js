@@ -4,8 +4,13 @@ import mongoose from 'mongoose';
 const WhatsappSchema = mongoose.Schema({
     message: String,
     name: String,
-    timestamp: String,
-    received: Boolean
+    received: Boolean,
+    room: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'rooms'
+    }
+}, {
+    timestamps: true
 });
 
 export default mongoose.model('messagecontents', WhatsappSchema); 

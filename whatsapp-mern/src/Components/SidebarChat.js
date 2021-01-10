@@ -1,12 +1,11 @@
 import { Avatar } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,  } from 'react-router-dom';
 import axios from '../axios';
 import '../sidebarchat.css';
 
 function SidebarChat({id, name, addNewChat}) {
     const [seed, setSeed] = useState('');
-
     useEffect(() => {
         setSeed(Math.floor(Math.random() * 5000))
     }, [] );
@@ -22,13 +21,18 @@ function SidebarChat({id, name, addNewChat}) {
         }
     };
 
+    
+    useEffect(() => {
+
+    },[id])
+
     return !addNewChat ? (
         <Link to={`/rooms/${id}`}>
             <div className="sidebarChat">
                 <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
                 <div className="sidebarChat-info">
                     <h2>{name}</h2>
-                    <p>Last message sent</p>
+                    <p></p>
                 </div>
             </div>
         </Link>
