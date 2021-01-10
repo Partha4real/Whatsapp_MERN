@@ -12,8 +12,15 @@ function Chat({messages}) {
     const {roomId} = useParams();
     const [roomName, setRoomName] = useState({});
 
-  const [{user}, dispatch] = useStateValue();
+    const [{user}, dispatch] = useStateValue();
 
+    useEffect(() => {
+        document.getElementsByClassName(
+          "chat-body"
+        )[0].scrollTop = document.getElementsByClassName(
+          "chat-body"
+        )[0].scrollHeight;
+      }, [messages]);
 
     useEffect(() => {
         setSeed(Math.floor(Math.random() * 5000))
@@ -46,7 +53,7 @@ function Chat({messages}) {
 
                 <div className="chat-headerInfo">
                     <h3>{roomName.name}</h3>
-                    <p>{new Date(messages[messages.length - 1].createdAt).toLocaleString()} </p>
+                    <p>{messages.length> 0 && new Date(messages[messages.length - 1].createdAt).toLocaleString()} </p>
                 </div>
 
                 <div className="chat-headerRight">
