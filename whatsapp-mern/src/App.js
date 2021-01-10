@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+
 import Pusher from 'pusher-js';
 import './App.css';
 import Chat from './Components/Chat';
@@ -35,8 +37,19 @@ function App() {
   return (
     <div className="app">
       <div className="app-body">
-        <Sidebar />
-        <Chat  messages={messages} />
+      <Router> 
+        <Switch>
+          <Sidebar />
+
+          <Route exact path="/">
+            <Chat  messages={messages} />
+          </Route>
+
+          <Route  path="/rooms/:roomId">
+            <Chat  messages={messages} />
+          </Route>
+        </Switch> 
+      </Router>
       </div>
     </div>
   );

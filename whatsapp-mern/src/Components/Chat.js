@@ -1,11 +1,18 @@
 import { Avatar, IconButton } from '@material-ui/core';
 import { AttachFile, InsertEmoticon, Mic, MoreVert, SearchOutlined, SettingsInputAntenna } from '@material-ui/icons';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {useParams} from 'react-router-dom';
 import axios from '../axios';
 import '../chat.css';
 
 function Chat({messages}) {
     const [input, setInput] = useState('');
+    const [seed, setSeed] = useState('');
+    const {roomId} = useParams();
+
+    useEffect(() => {
+        setSeed(Math.floor(Math.random() * 5000))
+    }, [] );
 
     const sendMessage = async (e) => {
         e.preventDefault();
@@ -21,7 +28,7 @@ function Chat({messages}) {
     return (
         <div className="chat">
             <div className="chat-header">
-                <Avatar />
+                <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
 
                 <div className="chat-headerInfo">
                     <h3>Room Name</h3>

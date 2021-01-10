@@ -2,6 +2,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Messages from './Messages.js';
+import Rooms from './Rooms.js';
 import morgan from 'morgan';
 import Pusher from 'pusher';
 import cors from 'cors';
@@ -43,6 +44,24 @@ mongoose.connect(DB_URL, {
 const db = mongoose.connection;
 db.once('open', () => {
     console.log('DB Connected');
+    const roomCollection = db.collection("rooms");
+    const changeRoomStream = roomCollection.watch();
+        changeRoomStream.on('change', (change) => {
+        console.log(change);
+
+        if (change.operationType === 'insert') {
+            const roomDetails = change.fullDocument;
+            pusher.trigger('rooms', 'created',
+            {
+                name: roomDetails.name,
+                id: roomDetails._id
+            });
+        } else {
+            console.log("Error triggering pusher");
+        }
+
+    });
+
     const msgCollection = db.collection("messagecontents");
     const changeStream = msgCollection.watch();
 
@@ -61,14 +80,40 @@ db.once('open', () => {
         } else {
             console.log("Error triggering pusher");
         }
-    })
-})
+    });
+});
 
 // ???
 
 // API routes
 app.get('/', (req, res) => res.status(200).send('hello world'));  // 200 -> OK 
 
+// Rooms
+app.post('/rooms/create', (req, res) => {
+    const dbRoom = req.body;
+
+    Rooms.create(dbRoom, (err, data) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(201).send(data)
+        }
+    });
+});
+
+app.get('/rooms/fetch', (req, res) => {
+
+    Rooms.find((err, data) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(200).send(data)
+        }
+    })
+})
+
+
+// messages
 app.post('/messages/new', (req, res) => {
     const dbMessage = req.body;
 
@@ -94,5 +139,3 @@ app.get('/messages/sync', (req, res) => {
 
 // listen
 app.listen(PORT, () => console.log(`Lispening on PORT ${PORT}`));
-
-
